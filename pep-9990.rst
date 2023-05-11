@@ -1,0 +1,129 @@
+PEP: ?
+Title: Specification of default extras in package metadata
+Author: Ronny Pfannschmidt <opensource@ronnypfannschmidt.de
+Sponsor:
+Discussions-To:
+Status: draft
+Type: Standards Track
+Topic: Packaging
+Content-Type: text/x-rst
+Created: 11-May-2023
+
+
+Abstract
+========
+
+This PEP specifies how to declare names of optional dependencies that should be installed by default
+and how to opt out of them
+
+Motivation
+============
+
+A number of python packages either ship requirements that are not strictly or they recommend installing with extras for certain use-caes.
+
+For example, currently setuptools_scm_ has to pull in the minimal version of setuptools or risk confused users,
+even if tools like hatch_vcs_ or others can use it without needing setuptools.
+
+Additionally tools
+
+
+.. __setuptools_scm: https://github.com/pypa/setuptools_scm
+.. __hatch_vcs: https://github.com/ofek/hatch-vcs
+
+Specification
+==============
+
+
+ex: if a distribution specifies the default extras ``test``, ``cli``, ``network``
+
+then
+
+.. csv-table::
+  :header: requirment, implies
+
+  dist, "dist[test,cli,network]"
+  dist[-], dist
+  "dist[-, cli]", dist[cli]
+  "dist[-cli]", "dist[test, network]"
+
+
+
+
+
+
+
+Default-Extra core metadata
+---------------------------
+
+The `Provides-Extra <https://packaging.python.org/en/latest/specifications/core-metadata/#provides-extra-multiple-use>`_
+metadata field specifies the available names for optional dependencies
+
+A ``Default-Extra: name`` metadata field should be added to list the extras that ought to be considered by default
+
+
+recommended-dependencies in pyproject.toml
+--------------------------------------------
+
+.. code-block:: toml
+
+   [project]
+   name = "example"
+   [project.recommended-dependencies]
+   cli = [
+      "click>=8.0",
+   }
+
+
+
+extras in requirement specifiers
+---------------------------------
+
+
+``-extra`` should be used to opt out of a specific extra
+
+``-`` should be used as marker to opt out of all default extras
+
+canonical extras requirement specifier
+
+when a specific distribution is resolved/considered,
+its extras specifier should be changed from a implicit form to a explicit form
+
+
+
+
+Constraints
+============
+
+Rejected Ideas
+==============
+
+propagation of opt-outs
+-----------------------
+
+A requested opt-out of a default extra cannot safely be propagated,
+as the effect on sibling dependencies is undefined.
+
+To avoid ambiguity a resolver must transform the implied defaults into a explicit specification
+
+
+
+
+References
+===========
+
+
+Copyright
+=========
+
+This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.
+
+
+..
+   Local Variables:
+   mode: indented-text
+   indent-tabs-mode: nil
+   sentence-end-double-space: t
+   fill-column: 70
+   coding: utf-8
+   End:
