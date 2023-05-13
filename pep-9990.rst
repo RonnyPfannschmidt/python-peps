@@ -88,11 +88,20 @@ canonical extras requirement specifier
 when a specific distribution is resolved/considered,
 its extras specifier should be changed from a implicit form to a explicit form
 
+Backwards Compatibility
+=======================
+
+The ``-`` is currently invalid as both single item in the requirement extras  specification
+as well as the leading character of a extra name.
+
+Resolvers not supporting this PEP are expected to fail when encountering extras specifications following this PEP.
 
 
 
-Constraints
-============
+Security Implications
+=====================
+
+Security scanners unaware of the addition may miss malicious dependencies that would install by default.
 
 Rejected Ideas
 ==============
