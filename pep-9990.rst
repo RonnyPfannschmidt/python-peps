@@ -1,9 +1,9 @@
-PEP: ?
+PEP: 9999
 Title: Specification of default extras in package metadata
-Author: Ronny Pfannschmidt <opensource@ronnypfannschmidt.de
+Author: Ronny Pfannschmidt <opensource@ronnypfannschmidt.de>
 Sponsor: Adam Turner <python@quite.org.uk>
 Discussions-To:
-Status: draft
+Status: Draft
 Type: Standards Track
 Topic: Packaging
 Content-Type: text/x-rst
