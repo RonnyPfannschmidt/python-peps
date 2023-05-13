@@ -1,7 +1,7 @@
 PEP: ?
 Title: Specification of default extras in package metadata
 Author: Ronny Pfannschmidt <opensource@ronnypfannschmidt.de
-Sponsor:
+Sponsor: Adam Turner <python@quite.org.uk>
 Discussions-To:
 Status: draft
 Type: Standards Track
@@ -19,16 +19,16 @@ and how to opt out of them
 Motivation
 ============
 
-A number of python packages either ship requirements that are not strictly or they recommend installing with extras for certain use-caes.
+A number of python packages either ship requirements that are not strictly required or they recommend installing with extras for certain use-caes.
 
-For example, currently setuptools_scm_ has to pull in the minimal version of setuptools or risk confused users,
-even if tools like hatch_vcs_ or others can use it without needing setuptools.
+For example, currently setuptools_scm_ requires setuptools (to convey the minimum-supported setuptools), but it does not require setuptools at runtime.
+`Hatch <hatch_vcs_>`_ would benefit from being able to specify setuptools_scm_, *without* having setuptools installed into the environment.
 
 Additionally tools
 
 
-.. __setuptools_scm: https://github.com/pypa/setuptools_scm
-.. __hatch_vcs: https://github.com/ofek/hatch-vcs
+.. _setuptools_scm: https://github.com/pypa/setuptools_scm
+.. _hatch_vcs: https://github.com/ofek/hatch-vcs
 
 Specification
 ==============
@@ -117,13 +117,3 @@ Copyright
 
 This document is placed in the public domain or under the
 CC0-1.0-Universal license, whichever is more permissive.
-
-
-..
-   Local Variables:
-   mode: indented-text
-   indent-tabs-mode: nil
-   sentence-end-double-space: t
-   fill-column: 70
-   coding: utf-8
-   End:
