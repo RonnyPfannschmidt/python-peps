@@ -1,0 +1,128 @@
+PEP: 9999
+Title: Specification of default extras in package metadata
+Author: Ronny Pfannschmidt <opensource@ronnypfannschmidt.de>
+Sponsor: Adam Turner <python@quite.org.uk>
+Discussions-To:
+Status: Draft
+Type: Standards Track
+Topic: Packaging
+Content-Type: text/x-rst
+Created: 11-May-2023
+
+
+Abstract
+========
+
+This PEP specifies how to declare names of optional dependencies that should be installed by default
+and how to opt out of them
+
+Motivation
+============
+
+A number of python packages either ship requirements that are not strictly required or they recommend installing with extras for certain use-caes.
+
+For example, currently setuptools_scm_ requires setuptools (to convey the minimum-supported setuptools), but it does not require setuptools at runtime.
+`Hatch <hatch_vcs_>`_ would benefit from being able to specify setuptools_scm_, *without* having setuptools installed into the environment.
+
+Additionally tools
+
+
+.. _setuptools_scm: https://github.com/pypa/setuptools_scm
+.. _hatch_vcs: https://github.com/ofek/hatch-vcs
+
+Specification
+==============
+
+
+ex: if a distribution specifies the default extras ``test``, ``cli``, ``network``
+
+then
+
+.. csv-table::
+  :header: requirment, implies
+
+  dist, "dist[test,cli,network]"
+  dist[-], dist
+  "dist[-, cli]", dist[cli]
+  "dist[-cli]", "dist[test, network]"
+
+
+
+
+
+
+
+Default-Extra core metadata
+---------------------------
+
+The `Provides-Extra <https://packaging.python.org/en/latest/specifications/core-metadata/#provides-extra-multiple-use>`_
+metadata field specifies the available names for optional dependencies
+
+A ``Default-Extra: name`` metadata field should be added to list the extras that ought to be considered by default
+
+
+recommended-dependencies in pyproject.toml
+--------------------------------------------
+
+.. code-block:: toml
+
+   [project]
+   name = "example"
+   [project.recommended-dependencies]
+   cli = [
+      "click>=8.0",
+   }
+
+
+
+extras in requirement specifiers
+---------------------------------
+
+
+``-extra`` should be used to opt out of a specific extra
+
+``-`` should be used as marker to opt out of all default extras
+
+canonical extras requirement specifier
+
+when a specific distribution is resolved/considered,
+its extras specifier should be changed from a implicit form to a explicit form
+
+Backwards Compatibility
+=======================
+
+The ``-`` is currently invalid as both single item in the requirement extras  specification
+as well as the leading character of a extra name.
+
+Resolvers not supporting this PEP are expected to fail when encountering extras specifications following this PEP.
+
+
+
+Security Implications
+=====================
+
+Security scanners unaware of the addition may miss malicious dependencies that would install by default.
+
+Rejected Ideas
+==============
+
+propagation of opt-outs
+-----------------------
+
+A requested opt-out of a default extra cannot safely be propagated,
+as the effect on sibling dependencies is undefined.
+
+To avoid ambiguity a resolver must transform the implied defaults into a explicit specification
+
+
+
+
+References
+===========
+
+
+Copyright
+=========
+
+This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.
