@@ -1,0 +1,140 @@
+PEP: 9999
+Title: Subexpression Value Annotated Assertions
+Author: Ronny Pfannschmidt <opensource@ronnypfannschmidt.de>
+Sponsor: tbd
+PEP-Delegate: tbd
+Status: Draft
+Type: Standards Track
+Content-Type: text/x-rst
+Created: 15-Jun-2023
+
+Abstract
+========
+
+Testing utilities like Pytest_ and Hammet_ currently go great lengths
+to help debugging assertions and intermediate values in assertions.
+
+They provide intermediate values and analysis of comparisons/approximations.
+
+
+It would constitute a immense benefit for python debugging if assertion natively tracked intermediate values/operator applications
+
+Motivation
+===========
+
+This PEP aims to bring a supercharged versions if pytests assertion tracking to python itself.
+with :pep:`0657` a first help for this was done as now there is a mapping of bytecodes to statements.
+
+However seeing where a assertion failed is only a minor part of debugging a assertion failure,
+in particular when using assertion in tests or when validating invariants.
+
+While a basic format string in a assertion message may be of some help,
+being able to show differences in the values directly used enables more clear debugging and
+prevents human error when assertions get updated, but the debugging message doesnt.
+
+Rationale
+=========
+
+
+Specification
+==============
+
+In order to provide detailed debugging of a assertion,
+python should record the intermediate results of each subexpression in a mapping.
+
+The visible api on the exception should expose ordered mapping of sub expression locations and their resulting objects
+
+.. code-block:: python
+
+   def test_fun():
+      a = 1
+      b = 2
+
+      assert a == 2 or b == 3
+
+
+should result in a assertion like:
+
+.. code-block:: text
+
+   AssertionError:
+    `a` -> 1
+    `a == 2`  -> False as _1
+    `b` -> 2
+    `b == 3` -> False as _2
+    `_1 or _2 -> False
+    `
+
+
+Implementation choices
+=========================
+
+
+ast transformation
+-------------------
+
+This is the mechanism pytest uses, this transforms the ast of an assertion to code
+which creates a number of temporary variables got each intermediate
+
+.. code-block:: python
+
+     def native():
+        assert a == 1
+
+      def simpliefied_transformed_exammple()
+        __pytest_1 = a
+        __pytest_2__ = 1
+        __pytest_3__ = __pytest_1__ == __pytest__2__
+        assert __pytest_3__
+
+
+ bytecode transformation
+-------------------------
+
+an assert statement would internally push the current code location and value to a list/map to enable tracking
+it would be th equivalent of the following pseudo code
+
+.. code-block:: python
+
+    def bytecode_track_example()
+        try:
+           __location_values={}
+           if (__location_values[current_location] := (__location_values[current_location] := a) == (__location_values[current_location] := q)=
+              raise AssertionError.with_intermediates(__location_values)
+        finally:
+          del __location_values
+
+
+bytecode tracing
+--------------------
+
+This would use f_trac and f_trace_opcodes
+
+.. code-block:: python
+
+    def bytecode_track_example()
+        with setuo_location_trace_context():
+           assert a == b
+
+
+
+
+
+
+
+
+
+
+
+
+Copyright
+=========
+
+This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.
+
+
+
+
+.. _Pytest: https://pypi.org/project/pytest/
+.. _Hammett: https://pypi.org/project/hammett/
